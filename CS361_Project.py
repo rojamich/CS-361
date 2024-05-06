@@ -5,6 +5,31 @@ import tkinter.messagebox as messagebox
 from PIL import Image, ImageTk
 
 
+class Tooltip:
+    def __init__(self, widget, text):
+        self.widget = widget
+        self.text = text
+        self.tooltip = None
+        self.widget.bind("<Enter>", self.show)
+        self.widget.bind("<Leave>", self.hide)
+
+    def show(self, event=None):
+        x, y, _, _ = self.widget.bbox("insert")
+        x += self.widget.winfo_rootx() + 50
+        y += self.widget.winfo_rooty() + 20
+        self.tooltip = tk.Toplevel(self.widget)
+        self.tooltip.wm_overrideredirect(True)
+        self.tooltip.wm_geometry(f"+{x}+{y}")
+        label = tk.Label(self.tooltip, text=self.text, background="#ffffe0", relief="solid", borderwidth=1,
+                         wraplength=200)
+        label.pack()
+
+    def hide(self, event=None):
+        if self.tooltip:
+            self.tooltip.destroy()
+            self.tooltip = None
+
+
 def continue_click():
     """To do"""
     pass
@@ -116,6 +141,9 @@ def add_custom_card():
     save_button = tk.Button(custom_card_window, text="Save", command=save_custom_card)
     save_button.grid(row=5, column=0, columnspan=4, padx=10, pady=10)
 
+    Tooltip(add_category_button,
+            "Click to add new category. Add as many bonus categories as your card has, but at least \"Other\" is "
+            "required")
     custom_card_window.mainloop()
 
 
@@ -170,6 +198,8 @@ btn_add_custom_card = tk.Button(master, text="Add Your Own Card Here", command=a
                                 relief="solid")
 btn_add_custom_card.grid(row=2, column=0, columnspan=2, padx=10, pady=10, sticky="n")
 
+Tooltip(btn_add_custom_card, "Add any cards not shown here to be added to your wallet. Include all cards for best,"
+                             " results.")
 #  btn_continue = tk.Button(master, text="Continue", command=continue_click, bg="#8BC34A",
 #                         width=20, height=3)
 #  btn_continue.grid(row=3, column=0, columnspan=2, padx=10, pady=10, sticky="n")
